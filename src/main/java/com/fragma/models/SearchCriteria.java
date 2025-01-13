@@ -4,17 +4,16 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.sql.SQLType;
-import java.sql.Types;
+import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class SearchCriteria {
     private String columnName;
-    private Object columnValue;
+    private List<Object> columnValues;
     private String operation;
     //specifies the SQL data type of the Column. from java.sql.Types
-    private int sqlDataType;
-    private String columnEntityName;//columnQualifier
+    private int columnDataType;
+    private String columnQualifier;
 }

@@ -4,7 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public enum EntityAlias {
-    EMAIL_INSTANCE("EmailInstance","ei"), EMAIL_MASTER("EmailMaster","em");
+    EMAIL_INSTANCE("ei","ei"), EMAIL_MASTER("em","em");
 
 
 
