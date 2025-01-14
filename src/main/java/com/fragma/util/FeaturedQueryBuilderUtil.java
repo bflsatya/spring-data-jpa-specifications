@@ -4,7 +4,12 @@ import com.fragma.models.SearchCriteria;
 import com.fragma.models.SearchOperation;
 import com.fragma.models.SearchRequestDto;
 import com.fragma.models.SortCriteria;
+import org.apache.commons.lang3.tuple.Pair;
+import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Types;
 import java.util.List;
 import java.util.Objects;
@@ -14,6 +19,8 @@ import static com.fragma.models.QueryConstants.*;
 import static com.fragma.models.SearchOperation.getSearchOpEnumByOperationStr;
 
 public class FeaturedQueryBuilderUtil {
+
+    // Actual Query --- queryBuilder
     public static void buildQueryWithSearchCriteria(SearchRequestDto searchRequestDto,
                                                              List<Object> queryParams, List<Integer> dataTypes,
                                                              StringBuilder queryBuilder) {
@@ -142,6 +149,17 @@ public class FeaturedQueryBuilderUtil {
                     .append(sortDir);
     }
 
+    public static Pair<Object[],int[]> convertParamsToArray(List<Object> queryParams, List<Integer> paramDataTypes) {
+        Object[] queryParamsArray = new Object[queryParams.size()];
+        int[] paramDataTypesArray = new int[paramDataTypes.size()];
+        for(int i=0; i< queryParams.size();i++) {
+            queryParamsArray[i] = queryParams.get(i);
+        }
+        for(int i=0; i< paramDataTypes.size();i++) {
+            paramDataTypesArray[i] = paramDataTypes.get(i);
+        }
+        return Pair.of(queryParamsArray,paramDataTypesArray);
+    }
 
 
 }

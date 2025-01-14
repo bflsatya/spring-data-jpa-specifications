@@ -4,11 +4,13 @@ import com.fragma.models.SearchCriteria;
 import com.fragma.models.SearchOperation;
 import com.fragma.models.SearchRequestDto;
 import com.fragma.models.SortCriteria;
+import org.apache.commons.lang3.tuple.Pair;
 import org.junit.Assert;
 import org.junit.Test;
 
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -298,6 +300,33 @@ public class FeaturedQueryBuilderUtilTest {
     }
 
 
+    @Test
+    public void shouldTestArrayInitialization() {
+        List<Object> queryParams= new ArrayList<>();
+        List<Integer> paramDataTypes = new ArrayList<>();
+
+        queryParams.add("param1");
+        queryParams.add("param2");
+
+        paramDataTypes.add(1);
+        paramDataTypes.add(2);
+        Pair<Object[],int[]> paramConversionResult = FeaturedQueryBuilderUtil.convertParamsToArray(queryParams,paramDataTypes);
+        System.out.println(paramConversionResult);
+        System.out.println(Arrays.toString(paramConversionResult.getLeft()));
+        System.out.println(Arrays.toString(paramConversionResult.getRight()));
+
+        queryParams.add("param3");
+        queryParams.add("param4");
+
+        paramDataTypes.add(3);
+        paramDataTypes.add(4);
+
+        Pair<Object[],int[]> paramConversionResult1 = FeaturedQueryBuilderUtil.convertParamsToArray(queryParams,paramDataTypes);
+        System.out.println(paramConversionResult1);
+        System.out.println(Arrays.toString(paramConversionResult.getLeft()));
+        System.out.println(Arrays.toString(paramConversionResult.getRight()));
+
+    }
 
 
 
