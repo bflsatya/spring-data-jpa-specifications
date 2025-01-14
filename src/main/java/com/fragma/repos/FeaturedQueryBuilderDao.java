@@ -53,10 +53,7 @@ public class FeaturedQueryBuilderDao {
         FeaturedQueryBuilderUtil.buildQueryWithSortCriteria(searchRequestDto.getSortCriteriaList(), queryBuilder);
         queryBuilder.append(" offset ? rows fetch next ? rows only");
         String finalQueryWithSearchSortAndPage = queryBuilder.toString();
-        queryParams.add((pageNumber-1)*pageSize);
-        queryParams.add(pageSize);
-        paramDataTypes.add(Types.INTEGER);
-        paramDataTypes.add(Types.INTEGER);
+        FeaturedQueryBuilderUtil.addPageRequestDataToQueryParams(pageNumber, pageSize, queryParams, paramDataTypes);
         paramConversionResult = FeaturedQueryBuilderUtil.convertParamsToArray(queryParams, paramDataTypes);
 
         jdbcTemplate.query(finalQueryWithSearchSortAndPage, paramConversionResult.getLeft() , paramConversionResult.getRight(), (resultSet, i) -> null);
@@ -65,5 +62,6 @@ public class FeaturedQueryBuilderDao {
         //set Response Object's currPageNumber(pageNumber)
         //set Response Object's result from above Query to a Variable
     }
+
 
 }

@@ -161,5 +161,12 @@ public class FeaturedQueryBuilderUtil {
         return Pair.of(queryParamsArray,paramDataTypesArray);
     }
 
+    public static void addPageRequestDataToQueryParams(int pageNumber, int pageSize, List<Object> queryParams, List<Integer> paramDataTypes) {
+        queryParams.add((pageNumber -1)* pageSize);
+        queryParams.add(pageSize);
+        paramDataTypes.add(Types.INTEGER);
+        paramDataTypes.add(Types.INTEGER);
+    }
+
 
 }
