@@ -69,6 +69,7 @@ public class FeaturedQueryBuilderDao {
         paramDataTypes.add(Types.INTEGER);
         paramDataTypes.add(Types.INTEGER);
 
+        queryParamsArray = queryParams.toArray();
         for(int i=0; i< queryParams.size();i++) {
             paramDataTypesArray[i] = paramDataTypes.get(i);
         }
