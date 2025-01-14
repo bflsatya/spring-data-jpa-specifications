@@ -74,15 +74,12 @@ public class FeaturedQueryBuilderDao {
             paramDataTypesArray[i] = paramDataTypes.get(i);
         }
 
-        jdbcTemplate.query(finalQueryWithSearchSortAndPage, queryParamsArray, paramDataTypesArray, new RowMapper<Object>() {
-            @Override
-            public Object mapRow(ResultSet resultSet, int i) throws SQLException {
-                return null;
-            }
-        });
+        jdbcTemplate.query(finalQueryWithSearchSortAndPage, queryParamsArray, paramDataTypesArray, (resultSet, i) -> null);
 
 
-
+        //set Response Object's totalNumberOfRows(totalNumberOfRows)
+        //set Response Object's currPageNumber(pageNumber)
+        //set Response Object's result from above Query to a Variable
     }
 
 
