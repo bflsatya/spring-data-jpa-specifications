@@ -11,5 +11,6 @@ import java.util.List;
 @AllArgsConstructor
 public class SearchRequestDto {
     private List<SearchCriteria> searchCriteriaList;
+    private List<SortCriteria> sortCriteriaList;
     private String dataOperation;
 }

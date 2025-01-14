@@ -11,5 +11,11 @@ public final class QueryConstants {
     public static final String PLACEHOLDER = "?";
     public static final String LIKE_WILDCARD = "%";
 
+    public static final String ORDER_BY = "ORDER BY";
+
+    public static final String COMMA = ",";
+
+
+
 
 }

@@ -3,6 +3,7 @@ package com.fragma.util;
 import com.fragma.models.SearchCriteria;
 import com.fragma.models.SearchOperation;
 import com.fragma.models.SearchRequestDto;
+import com.fragma.models.SortCriteria;
 
 import java.sql.Types;
 import java.util.List;
@@ -13,9 +14,10 @@ import static com.fragma.models.QueryConstants.*;
 import static com.fragma.models.SearchOperation.getSearchOpEnumByOperationStr;
 
 public class FeaturedQueryBuilderUtil {
-    public static StringBuilder buildQueryWithSearchCriteria(SearchRequestDto searchRequestDto, List<Object> queryParams, List<Integer> dataTypes) {
+    public static void buildQueryWithSearchCriteria(SearchRequestDto searchRequestDto,
+                                                             List<Object> queryParams, List<Integer> dataTypes,
+                                                             StringBuilder queryBuilder) {
         List<SearchCriteria> searchCriteriaList = searchRequestDto.getSearchCriteriaList();
-        StringBuilder queryBuilder = new StringBuilder();
         if(Objects.nonNull(searchCriteriaList) && !searchCriteriaList.isEmpty()) {
             for(SearchCriteria searchCriteria : searchCriteriaList) {
                 String columnQualifier = searchCriteria.getColumnQualifier();
@@ -28,7 +30,6 @@ public class FeaturedQueryBuilderUtil {
                         queryBuilder, queryParams, dataTypes, columnName, entityAlias);
             }
         }
-        return queryBuilder;
     }
 
 
@@ -118,4 +119,29 @@ public class FeaturedQueryBuilderUtil {
 
         }
     }
+
+    public static void buildQueryWithSortCriteria(List<SortCriteria> sortCriteriaList, StringBuilder queryBuilder) {
+        if(Objects.nonNull(sortCriteriaList) && !sortCriteriaList.isEmpty()) {
+            queryBuilder.append(SPACE).append(ORDER_BY).append(SPACE);
+            for(SortCriteria sortCriteria : sortCriteriaList) {
+                String columnQualifier = sortCriteria.getColumnQualifier();
+                String columnName = sortCriteria.getColumnName();
+                String entityAlias = getEntityAliasByName(columnQualifier);
+                String sortDir = sortCriteria.getSortDir();
+                createSortQuery(entityAlias, columnName, sortDir, queryBuilder);
+                queryBuilder.append(COMMA);
+            }
+            queryBuilder.setLength(Math.max(queryBuilder.length() - 1, 0));
+        }
+    }
+
+    private static void createSortQuery(String entityAlias,String columnName,String sortDir,
+                                        StringBuilder queryBuilder) {
+        queryBuilder.append(entityAlias).append(DOT).append(columnName)
+                    .append(SPACE)
+                    .append(sortDir);
+    }
+
+
+
 }

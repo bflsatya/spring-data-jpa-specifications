@@ -3,6 +3,7 @@ package com.fragma.util;
 import com.fragma.models.SearchCriteria;
 import com.fragma.models.SearchOperation;
 import com.fragma.models.SearchRequestDto;
+import com.fragma.models.SortCriteria;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -37,8 +38,9 @@ public class FeaturedQueryBuilderUtilTest {
 
         List<Object> queryParams= new ArrayList<>();
         List<Integer> dataTypes = new ArrayList<>();
-        StringBuilder stringBuilder = FeaturedQueryBuilderUtil.buildQueryWithSearchCriteria(searchRequestDto, queryParams, dataTypes);
-        Assert.assertEquals(" AND (ei.emailId =?) ", stringBuilder.toString());
+        StringBuilder queryBuilder = new StringBuilder();
+        FeaturedQueryBuilderUtil.buildQueryWithSearchCriteria(searchRequestDto, queryParams, dataTypes, queryBuilder);
+        Assert.assertEquals(" AND (ei.emailId =?) ", queryBuilder.toString());
         Assert.assertEquals(1, queryParams.size());
         Assert.assertEquals(1, dataTypes.size());
         Assert.assertEquals("test@gmail.com", queryParams.get(0));
@@ -67,8 +69,9 @@ public class FeaturedQueryBuilderUtilTest {
 
         List<Object> queryParams= new ArrayList<>();
         List<Integer> dataTypes = new ArrayList<>();
-        StringBuilder stringBuilder = FeaturedQueryBuilderUtil.buildQueryWithSearchCriteria(searchRequestDto, queryParams, dataTypes);
-        Assert.assertEquals(stringBuilder.toString()," AND (ei.createdDate BETWEEN cast(? as DATE) AND cast(? as DATE)) ");
+        StringBuilder queryBuilder = new StringBuilder();
+        FeaturedQueryBuilderUtil.buildQueryWithSearchCriteria(searchRequestDto, queryParams, dataTypes, queryBuilder);
+        Assert.assertEquals(queryBuilder.toString()," AND (ei.createdDate BETWEEN cast(? as DATE) AND cast(? as DATE)) ");
         Assert.assertEquals(2, queryParams.size());
         Assert.assertEquals(2, dataTypes.size());
         Assert.assertEquals("11-01-2025", queryParams.get(0));
@@ -98,8 +101,9 @@ public class FeaturedQueryBuilderUtilTest {
 
         List<Object> queryParams= new ArrayList<>();
         List<Integer> dataTypes = new ArrayList<>();
-        StringBuilder stringBuilder = FeaturedQueryBuilderUtil.buildQueryWithSearchCriteria(searchRequestDto, queryParams, dataTypes);
-        Assert.assertEquals(" AND (ei.age BETWEEN ? AND ?) ",stringBuilder.toString());
+        StringBuilder queryBuilder = new StringBuilder();
+        FeaturedQueryBuilderUtil.buildQueryWithSearchCriteria(searchRequestDto, queryParams, dataTypes, queryBuilder);
+        Assert.assertEquals(" AND (ei.age BETWEEN ? AND ?) ",queryBuilder.toString());
         Assert.assertEquals(2, queryParams.size());
         Assert.assertEquals(2, dataTypes.size());
         Assert.assertEquals("2", queryParams.get(0));
@@ -128,8 +132,10 @@ public class FeaturedQueryBuilderUtilTest {
 
         List<Object> queryParams= new ArrayList<>();
         List<Integer> dataTypes = new ArrayList<>();
-        StringBuilder stringBuilder = FeaturedQueryBuilderUtil.buildQueryWithSearchCriteria(searchRequestDto, queryParams, dataTypes);
-        Assert.assertEquals(" AND (ei.emailId LIKE ?) ", stringBuilder.toString());
+        StringBuilder queryBuilder = new StringBuilder();
+        FeaturedQueryBuilderUtil.buildQueryWithSearchCriteria(searchRequestDto, queryParams, dataTypes, queryBuilder);
+
+        Assert.assertEquals(" AND (ei.emailId LIKE ?) ", queryBuilder.toString());
         Assert.assertEquals(1, queryParams.size());
         Assert.assertEquals(1, dataTypes.size());
         Assert.assertEquals("%test@gmail%", queryParams.get(0));
@@ -157,12 +163,144 @@ public class FeaturedQueryBuilderUtilTest {
 
         List<Object> queryParams= new ArrayList<>();
         List<Integer> dataTypes = new ArrayList<>();
-        StringBuilder stringBuilder = FeaturedQueryBuilderUtil.buildQueryWithSearchCriteria(searchRequestDto, queryParams, dataTypes);
-        Assert.assertEquals(" AND (ei.emailId NOT LIKE ?) ", stringBuilder.toString());
+        StringBuilder queryBuilder = new StringBuilder();
+        FeaturedQueryBuilderUtil.buildQueryWithSearchCriteria(searchRequestDto, queryParams, dataTypes, queryBuilder);
+
+        Assert.assertEquals(" AND (ei.emailId NOT LIKE ?) ", queryBuilder.toString());
         Assert.assertEquals(1, queryParams.size());
         Assert.assertEquals(1, dataTypes.size());
         Assert.assertEquals("%test@gmail%", queryParams.get(0));
     }
+
+    @Test
+    public void shouldReturnMultipleSearchCriteriaQuery() {
+        SearchRequestDto searchRequestDto = new SearchRequestDto();
+        List<SearchCriteria> searchCriteriaList = new ArrayList<>();
+        SearchCriteria searchCriteria1 = new SearchCriteria();
+        searchCriteria1.setColumnName("emailId");
+        searchCriteria1.setColumnDataType(Types.VARCHAR);
+        searchCriteria1.setColumnQualifier("ei");
+        searchCriteria1.setOperation(SearchOperation.CONTAINS.getSearchOpStr());
+
+        List<Object> columnValues = new ArrayList<>();
+        columnValues.add("test@gmail");
+
+        searchCriteria1.setColumnValues(columnValues);
+
+        SearchCriteria searchCriteria2 = new SearchCriteria();
+        searchCriteria2.setColumnName("age");
+        searchCriteria2.setColumnDataType(Types.INTEGER);
+        searchCriteria2.setColumnQualifier("ei");
+        searchCriteria2.setOperation(SearchOperation.BETWEEN.getSearchOpStr());
+
+        List<Object> columnValues2 = new ArrayList<>();
+        columnValues2.add("2");
+        columnValues2.add("5");
+
+        searchCriteria2.setColumnValues(columnValues2);
+
+        searchCriteriaList.add(searchCriteria1);
+        searchCriteriaList.add(searchCriteria2);
+
+
+        searchRequestDto.setSearchCriteriaList(searchCriteriaList);
+
+        List<Object> queryParams= new ArrayList<>();
+        List<Integer> dataTypes = new ArrayList<>();
+        StringBuilder queryBuilder = new StringBuilder();
+        FeaturedQueryBuilderUtil.buildQueryWithSearchCriteria(searchRequestDto, queryParams, dataTypes, queryBuilder);
+        Assert.assertEquals(" AND (ei.emailId LIKE ?)  AND (ei.age BETWEEN ? AND ?) ", queryBuilder.toString());
+        //System.out.println(queryBuilder.toString());
+    }
+
+
+    @Test
+    public void shouldReturnSORTBYASCENDINGQuery() {
+
+        List<SortCriteria> sortCriteriaList = new ArrayList<>();
+        SortCriteria sortCriteria1 = new SortCriteria();
+        sortCriteria1.setColumnName("emailId");
+        sortCriteria1.setColumnQualifier("ei");
+        sortCriteria1.setSortDir("ASC");
+
+        sortCriteriaList.add(sortCriteria1);
+
+        SortCriteria sortCriteria2 = new SortCriteria();
+        sortCriteria2.setColumnName("name");
+        sortCriteria2.setColumnQualifier("em");
+        sortCriteria2.setSortDir("DESC");
+
+        sortCriteriaList.add(sortCriteria2);
+
+        StringBuilder queryBuilder = new StringBuilder();
+        FeaturedQueryBuilderUtil.buildQueryWithSortCriteria(sortCriteriaList, queryBuilder);
+
+        Assert.assertEquals(" ORDER BY ei.emailId ASC,em.name DESC", queryBuilder.toString());
+    }
+
+
+    @Test
+    public void shouldReturnMultipleSearchCriteriaAndMultipleSortCriteriaQuery() {
+        SearchRequestDto searchRequestDto = new SearchRequestDto();
+        List<SearchCriteria> searchCriteriaList = new ArrayList<>();
+        SearchCriteria searchCriteria1 = new SearchCriteria();
+        searchCriteria1.setColumnName("emailId");
+        searchCriteria1.setColumnDataType(Types.VARCHAR);
+        searchCriteria1.setColumnQualifier("ei");
+        searchCriteria1.setOperation(SearchOperation.CONTAINS.getSearchOpStr());
+
+        List<Object> columnValues = new ArrayList<>();
+        columnValues.add("test@gmail");
+
+        searchCriteria1.setColumnValues(columnValues);
+
+        SearchCriteria searchCriteria2 = new SearchCriteria();
+        searchCriteria2.setColumnName("age");
+        searchCriteria2.setColumnDataType(Types.INTEGER);
+        searchCriteria2.setColumnQualifier("ei");
+        searchCriteria2.setOperation(SearchOperation.BETWEEN.getSearchOpStr());
+
+        List<Object> columnValues2 = new ArrayList<>();
+        columnValues2.add("2");
+        columnValues2.add("5");
+
+        searchCriteria2.setColumnValues(columnValues2);
+
+        searchCriteriaList.add(searchCriteria1);
+        searchCriteriaList.add(searchCriteria2);
+
+
+        searchRequestDto.setSearchCriteriaList(searchCriteriaList);
+
+        List<Object> queryParams= new ArrayList<>();
+        List<Integer> dataTypes = new ArrayList<>();
+        StringBuilder queryBuilder = new StringBuilder();
+        FeaturedQueryBuilderUtil.buildQueryWithSearchCriteria(searchRequestDto, queryParams, dataTypes, queryBuilder);
+
+        List<SortCriteria> sortCriteriaList = new ArrayList<>();
+        SortCriteria sortCriteria1 = new SortCriteria();
+        sortCriteria1.setColumnName("emailId");
+        sortCriteria1.setColumnQualifier("ei");
+        sortCriteria1.setSortDir("ASC");
+
+        sortCriteriaList.add(sortCriteria1);
+
+        SortCriteria sortCriteria2 = new SortCriteria();
+        sortCriteria2.setColumnName("name");
+        sortCriteria2.setColumnQualifier("em");
+        sortCriteria2.setSortDir("DESC");
+
+        sortCriteriaList.add(sortCriteria2);
+
+        FeaturedQueryBuilderUtil.buildQueryWithSortCriteria(sortCriteriaList, queryBuilder);
+        Assert.assertEquals(" AND (ei.emailId LIKE ?)  AND (ei.age BETWEEN ? AND ?)  ORDER BY ei.emailId ASC,em.name DESC",
+                            queryBuilder.toString());
+    }
+
+
+
+
+
 
 
 }
