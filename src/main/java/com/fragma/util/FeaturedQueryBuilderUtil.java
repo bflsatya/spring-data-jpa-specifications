@@ -84,9 +84,9 @@ public class FeaturedQueryBuilderUtil {
                 dataTypes.add(sqlDataType);
                 break;
             }
-            // " and (alias.columnName BETWEEN cast(? as DATE) and cast(? as DATE)) "
+            // "WHERE 1=1  and (alias.columnName BETWEEN cast(? as DATE) and cast(? as DATE)) "
             case BETWEEN: {
-                if(Types.DATE == sqlDataType) {
+                if((Types.DATE == sqlDataType) || (Types.TIMESTAMP == sqlDataType)) {
                     //
                     queryBuilder.append(SPACE)
                             .append(AND)
