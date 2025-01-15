@@ -12,5 +12,6 @@ import java.util.List;
 public class SearchRequestDto {
     private List<SearchCriteria> searchCriteriaList;
     private List<SortCriteria> sortCriteriaList;
-    private String dataOperation;
+    //private String dataOperation;
 }
+// Request Params -- Page Number an Page Size

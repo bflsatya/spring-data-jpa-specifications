@@ -5,36 +5,32 @@ import com.fragma.models.SearchOperation;
 import com.fragma.models.SearchRequestDto;
 import com.fragma.models.SortCriteria;
 import org.apache.commons.lang3.tuple.Pair;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
+import org.apache.commons.lang3.tuple.Triple;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Types;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
-import static com.fragma.models.EntityAlias.getEntityAliasByName;
 import static com.fragma.models.QueryConstants.*;
 import static com.fragma.models.SearchOperation.getSearchOpEnumByOperationStr;
 
 public class FeaturedQueryBuilderUtil {
 
-    // Actual Query --- queryBuilder
     public static void buildQueryWithSearchCriteria(SearchRequestDto searchRequestDto,
-                                                             List<Object> queryParams, List<Integer> dataTypes,
-                                                             StringBuilder queryBuilder) {
+                                                    List<Object> queryParams, List<Integer> dataTypes,
+                                                    StringBuilder queryBuilder, Map<String, Triple<String,String,Integer>> columnMetadataMap) {
         List<SearchCriteria> searchCriteriaList = searchRequestDto.getSearchCriteriaList();
         if(Objects.nonNull(searchCriteriaList) && !searchCriteriaList.isEmpty()) {
             for(SearchCriteria searchCriteria : searchCriteriaList) {
-                String columnQualifier = searchCriteria.getColumnQualifier();
-                String columnName = searchCriteria.getColumnName();
-                String entityAlias = getEntityAliasByName(columnQualifier);
+                String uiColumnName = searchCriteria.getUiColumnName();
+                String entityAlias = columnMetadataMap.get(uiColumnName).getLeft();
+                String dbColumnName = columnMetadataMap.get(uiColumnName).getMiddle();
+                int sqlDataType = columnMetadataMap.get(uiColumnName).getRight();
                 String operation = searchCriteria.getOperation();
                 List<Object> columnValues = searchCriteria.getColumnValues();
-                int sqlDataType = searchCriteria.getColumnDataType();
                 addPlaceHoldersParamsAndDataTypesByOperationType(operation, sqlDataType, columnValues,
-                        queryBuilder, queryParams, dataTypes, columnName, entityAlias);
+                        queryBuilder, queryParams, dataTypes, dbColumnName, entityAlias);
             }
         }
     }
@@ -127,15 +123,15 @@ public class FeaturedQueryBuilderUtil {
         }
     }
 
-    public static void buildQueryWithSortCriteria(List<SortCriteria> sortCriteriaList, StringBuilder queryBuilder) {
+    public static void buildQueryWithSortCriteria(List<SortCriteria> sortCriteriaList, StringBuilder queryBuilder, Map<String, Triple<String,String,Integer>> columnMetadataMap) {
         if(Objects.nonNull(sortCriteriaList) && !sortCriteriaList.isEmpty()) {
             queryBuilder.append(SPACE).append(ORDER_BY).append(SPACE);
             for(SortCriteria sortCriteria : sortCriteriaList) {
-                String columnQualifier = sortCriteria.getColumnQualifier();
-                String columnName = sortCriteria.getColumnName();
-                String entityAlias = getEntityAliasByName(columnQualifier);
+                String uiColumnName = sortCriteria.getUiColumnName();
+                String entityAlias = columnMetadataMap.get(uiColumnName).getLeft();
+                String dbColumnName = columnMetadataMap.get(uiColumnName).getMiddle();
                 String sortDir = sortCriteria.getSortDir();
-                createSortQuery(entityAlias, columnName, sortDir, queryBuilder);
+                createSortQuery(entityAlias, dbColumnName, sortDir, queryBuilder);
                 queryBuilder.append(COMMA);
             }
             queryBuilder.setLength(Math.max(queryBuilder.length() - 1, 0));

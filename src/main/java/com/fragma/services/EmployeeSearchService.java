@@ -6,7 +6,6 @@ import com.fragma.repos.EmployeeSearchRepo;
 import com.fragma.specifications.EmployeeSpecificationBuilder;
 import com.fragma.specifications.EmployeeSpecifications;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -41,7 +40,7 @@ public class EmployeeSearchService {
     }
 
     private static Map<String, List<SearchCriteria>> getSearchCriteriaGroupedByColumnName(List<SearchCriteria> searchCriteriaList) {
-        return searchCriteriaList.stream().collect(Collectors.groupingBy(searchCriteria -> searchCriteria.getColumnName()));
+        return searchCriteriaList.stream().collect(Collectors.groupingBy(searchCriteria -> searchCriteria.getUiColumnName()));
     }
 
     //private Specification<Employee> getSpecificationByColumnName(String columnName, String columnValue, )

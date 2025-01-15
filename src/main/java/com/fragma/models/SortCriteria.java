@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SortCriteria {
-    private String columnName;
+    private String uiColumnName;
     private String sortDir;
-    private String columnQualifier;
 }
