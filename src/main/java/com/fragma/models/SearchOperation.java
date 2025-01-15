@@ -5,6 +5,7 @@ import java.util.Map;
 
 public enum SearchOperation {
     CONTAINS("cn","LIKE"), DOES_NOT_CONTAIN("dcn","NOT LIKE"),
+    STARTS_WITH("sw","LIKE"),
     EQUALS("eq","="),GREATER_THAN_EQUALS("gte",">="),
     LESS_THAN_EQUALS("lte","<="),BETWEEN("btw","BETWEEN");
 

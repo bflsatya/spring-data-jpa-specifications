@@ -13,6 +13,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import static com.fragma.models.QueryConstants.*;
+import static com.fragma.models.SearchOperation.STARTS_WITH;
 import static com.fragma.models.SearchOperation.getSearchOpEnumByOperationStr;
 
 public class FeaturedQueryBuilderUtil {
@@ -62,7 +63,8 @@ public class FeaturedQueryBuilderUtil {
             }
             // " and (alias.columnName (LIKE or NOT LIKE) ?) "
             case CONTAINS:
-            case DOES_NOT_CONTAIN: {
+            case DOES_NOT_CONTAIN:
+            case STARTS_WITH: {
                 queryBuilder.append(SPACE)
                         .append(AND)
                         .append(SPACE)
@@ -74,7 +76,11 @@ public class FeaturedQueryBuilderUtil {
                         .append(PLACEHOLDER)
                         .append(")")
                         .append(SPACE);
-                queryParams.add(LIKE_WILDCARD + columnValues.get(0) + LIKE_WILDCARD);
+                if(STARTS_WITH.equals(searchOperation)){
+                    queryParams.add(columnValues.get(0) + LIKE_WILDCARD);;
+                } else {
+                    queryParams.add(LIKE_WILDCARD + columnValues.get(0) + LIKE_WILDCARD);
+                }
                 dataTypes.add(sqlDataType);
                 break;
             }
