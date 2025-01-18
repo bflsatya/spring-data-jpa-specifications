@@ -1,15 +1,16 @@
 package com.fragma.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class SearchCriteria {
+@Setter
+@Getter
+public class SearchCriteria implements Serializable {
     private String uiColumnName;
     private List<Object> columnValues;
     private String operation;

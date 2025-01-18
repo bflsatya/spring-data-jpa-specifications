@@ -9,7 +9,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import javax.sql.DataSource;
 
 @Configuration
-@ConfigurationProperties(prefix = "local.mysql.db")
+@ConfigurationProperties(prefix = "fragmavm.sql.db")
 public class JDBCTemplateConfig {
     private String driver;
     private String url;

@@ -1,13 +1,15 @@
 package com.fragma.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
+
+import java.io.Serializable;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class SortCriteria {
+@Setter
+@Getter
+public class SortCriteria implements Serializable {
     private String uiColumnName;
     private String sortDir;
 }

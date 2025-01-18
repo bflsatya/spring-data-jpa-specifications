@@ -1,17 +1,16 @@
 package com.fragma.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class SearchRequestDto {
+@Setter
+@Getter
+public class SearchRequestDto implements Serializable {
     private List<SearchCriteria> searchCriteriaList;
     private List<SortCriteria> sortCriteriaList;
-    //private String dataOperation;
 }
-// Request Params -- Page Number an Page Size
